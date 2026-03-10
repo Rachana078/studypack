@@ -29,23 +29,23 @@ export default async function FlashcardsPage({ params }: PageProps) {
     .eq('study_set_id', id)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--bg)]">
       <Navbar />
 
       <div className="mx-auto max-w-5xl px-6 py-3">
         <div className="flex items-center gap-2 text-sm">
-          <Link href="/dashboard" className="text-gray-500 hover:text-gray-700">Dashboard</Link>
-          <span className="text-gray-300">/</span>
-          <Link href={`/study-sets/${id}`} className="text-gray-500 hover:text-gray-700 truncate max-w-xs">
+          <Link href="/dashboard" className="text-[var(--muted)] hover:text-[var(--text)] transition-colors">Dashboard</Link>
+          <span className="text-[var(--border)]">/</span>
+          <Link href={`/study-sets/${id}`} className="text-[var(--muted)] hover:text-[var(--text)] transition-colors truncate max-w-xs">
             {studySet.title}
           </Link>
-          <span className="text-gray-300">/</span>
-          <span className="text-gray-900 font-medium">Flashcards</span>
+          <span className="text-[var(--border)]">/</span>
+          <span className="text-[var(--text)] font-medium">Flashcards</span>
         </div>
       </div>
 
       <main className="mx-auto max-w-5xl px-6 py-6">
-        <h1 className="mb-8 text-xl font-bold text-gray-900">Flashcards</h1>
+        <h1 className="mb-8 text-xl font-bold text-[var(--text)]">Flashcards</h1>
         <FlashcardDeck flashcards={flashcards ?? []} />
       </main>
     </div>

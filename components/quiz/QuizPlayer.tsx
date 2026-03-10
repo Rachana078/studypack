@@ -140,7 +140,7 @@ export default function QuizPlayer({ questions }: QuizPlayerProps) {
       </div>
 
       {/* Question card */}
-      <div className="rounded-2xl bg-white border-2 border-pink-100 p-6 shadow-sm">
+      <div className="rounded-2xl bg-[var(--surface)] border-2 border-[var(--border)] p-6 shadow-sm">
         <p className="font-bold text-gray-900 text-base leading-snug mb-5">{q.question}</p>
         <div className="flex flex-col gap-2.5">
           {options.map(({ label, text }) => (
