@@ -1,26 +1,72 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* ─── Tailwind theme tokens (CSS vars → Tailwind utilities) ─── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-bg:          var(--bg);
+  --color-surface:     var(--surface);
+  --color-surface-2:   var(--surface-2);
+  --color-border:      var(--border);
+  --color-text:        var(--text);
+  --color-muted:       var(--muted);
+  --color-accent:      var(--accent);
+  --color-accent-2:    var(--accent-2);
+  --color-hero-from:   var(--hero-from);
+  --color-hero-to:     var(--hero-to);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── PINK theme (default brand) ─── */
+:root,
+.pink {
+  --bg:         #fce7f3;
+  --surface:    #fdf2f8;
+  --surface-2:  #fac8e8;
+  --border:     #f0abda;
+  --text:       #4a1040;
+  --muted:      #a1527a;
+  --accent:     #db2777;
+  --accent-2:   #7c3aed;
+  --hero-from:  #fbcfe8;
+  --hero-to:    #ddd6fe;
+}
+
+/* ─── LIGHT theme (Slate/Neutral) ─── */
+.light {
+  --bg:         #f8f9fa;
+  --surface:    #ffffff;
+  --surface-2:  #f1f3f5;
+  --border:     #dee2e6;
+  --text:       #212529;
+  --muted:      #868e96;
+  --accent:     #343a40;
+  --accent-2:   #495057;
+  --hero-from:  #e9ecef;
+  --hero-to:    #dee2e6;
+}
+
+/* ─── DARK theme ─── */
+.dark {
+  --bg:         #0f0f13;
+  --surface:    #1a1a24;
+  --surface-2:  #252535;
+  --border:     #2e2e42;
+  --text:       #f1f0f5;
+  --muted:      #6b6b8a;
+  --accent:     #c084fc;
+  --accent-2:   #f472b6;
+  --hero-from:  #18181f;
+  --hero-to:    #1a1a24;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Prevent transition on page load */
+.no-transitions * {
+  transition: none !important;
 }

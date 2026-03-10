@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useTheme } from 'next-themes'
+import { useEffect, useState } from 'react'
 
 interface QuizQuestion {
   id: string
@@ -15,39 +16,83 @@ interface QuizQuestion {
 
 interface QuizPlayerProps {
   questions: QuizQuestion[]
+  studySetId: string
 }
 
 type Answer = 'A' | 'B' | 'C' | 'D'
 
+interface ShuffledQuestion extends QuizQuestion {
+  shuffled_options: { label: Answer; text: string }[]
+  shuffled_correct: Answer
+}
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
+function buildShuffled(questions: QuizQuestion[]): ShuffledQuestion[] {
+  return shuffle(questions).map(q => {
+    const opts = [
+      { label: 'A' as Answer, text: q.option_a },
+      { label: 'B' as Answer, text: q.option_b },
+      { label: 'C' as Answer, text: q.option_c },
+      { label: 'D' as Answer, text: q.option_d },
+    ]
+    const correctText = opts.find(o => o.label === q.correct_answer)!.text
+    const shuffledOpts = shuffle(opts).map((o, i) => ({
+      ...o,
+      label: (['A', 'B', 'C', 'D'] as Answer[])[i],
+    }))
+    return {
+      ...q,
+      shuffled_options: shuffledOpts,
+      shuffled_correct: shuffledOpts.find(o => o.text === correctText)!.label,
+    }
+  })
+}
+
 const SCORE_EMOJI = (score: number, total: number) => {
   const pct = score / total
-  if (pct === 1) return '🏆'
-  if (pct >= 0.8) return '🎉'
-  if (pct >= 0.6) return '👍'
-  if (pct >= 0.4) return '📚'
+  if (pct === 1)    return '🏆'
+  if (pct >= 0.8)   return '🎉'
+  if (pct >= 0.6)   return '👍'
+  if (pct >= 0.4)   return '📚'
   return '💪'
 }
 
 const SCORE_MSG = (score: number, total: number) => {
   const pct = score / total
-  if (pct === 1) return 'Perfect score!'
-  if (pct >= 0.8) return 'Great job!'
-  if (pct >= 0.6) return 'Solid effort!'
-  if (pct >= 0.4) return 'Keep studying!'
+  if (pct === 1)    return 'Perfect score!'
+  if (pct >= 0.8)   return 'Great job!'
+  if (pct >= 0.6)   return 'Solid effort!'
+  if (pct >= 0.4)   return 'Keep studying!'
   return 'You got this — try again!'
 }
 
-export default function QuizPlayer({ questions }: QuizPlayerProps) {
+export default function QuizPlayer({ questions, studySetId }: QuizPlayerProps) {
+  const { theme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  const [shuffled] = useState<ShuffledQuestion[]>(() => buildShuffled(questions))
   const [index, setIndex] = useState(0)
   const [selected, setSelected] = useState<Answer | null>(null)
   const [score, setScore] = useState(0)
   const [finished, setFinished] = useState(false)
 
+  useEffect(() => setMounted(true), [])
+
+  const isDark  = mounted && theme === 'dark'
+  const isLight = mounted && theme === 'light'
+
   if (questions.length === 0) {
     return (
       <div className="text-center py-20">
         <div className="text-5xl mb-3">🧠</div>
-        <p className="text-gray-500">No quiz questions generated for this set.</p>
+        <p className="text-[var(--muted)]">No quiz questions generated for this set.</p>
       </div>
     )
   }
@@ -57,11 +102,13 @@ export default function QuizPlayer({ questions }: QuizPlayerProps) {
     return (
       <div className="max-w-md mx-auto text-center py-12">
         <div className="text-7xl mb-4">{SCORE_EMOJI(score, questions.length)}</div>
-        <div className="text-5xl font-black text-gray-900 mb-1">{score}<span className="text-2xl text-gray-400">/{questions.length}</span></div>
-        <div className="text-lg font-semibold text-pink-500 mb-1">{pct}% correct</div>
-        <div className="text-gray-400 text-sm mb-8">{SCORE_MSG(score, questions.length)}</div>
+        <div className="text-5xl font-black text-[var(--text)] mb-1">
+          {score}<span className="text-2xl text-[var(--muted)]">/{questions.length}</span>
+        </div>
+        <div className="text-lg font-semibold text-[var(--accent)] mb-1">{pct}% correct</div>
+        <div className="text-[var(--muted)] text-sm mb-8">{SCORE_MSG(score, questions.length)}</div>
 
-        <div className="h-3 bg-pink-100 rounded-full overflow-hidden mb-8">
+        <div className="h-3 bg-[var(--surface-2)] rounded-full overflow-hidden mb-8">
           <div
             className="h-full bg-gradient-to-r from-pink-400 to-violet-400 rounded-full transition-all duration-700"
             style={{ width: `${pct}%` }}
@@ -78,47 +125,56 @@ export default function QuizPlayer({ questions }: QuizPlayerProps) {
     )
   }
 
-  const q = questions[index]
-  const options: { label: Answer; text: string }[] = [
-    { label: 'A', text: q.option_a },
-    { label: 'B', text: q.option_b },
-    { label: 'C', text: q.option_c },
-    { label: 'D', text: q.option_d },
-  ]
-  const progress = ((index + 1) / questions.length) * 100
-
-  function handleSelect(answer: Answer) {
-    if (selected) return
-    setSelected(answer)
-    if (answer === q.correct_answer) setScore((s) => s + 1)
-  }
-
-  function handleNext() {
-    setSelected(null)
-    if (index + 1 >= questions.length) {
-      setFinished(true)
-    } else {
-      setIndex((i) => i + 1)
-    }
-  }
+  const q = shuffled[index]
+  const options = q.shuffled_options
+  const progress = ((index + 1) / shuffled.length) * 100
+  const isCorrect = selected === q.shuffled_correct
 
   function optionClass(label: Answer) {
     const base = 'w-full text-left rounded-xl border-2 px-4 py-3.5 text-sm font-medium transition-all duration-150 flex items-center gap-3 '
-    if (!selected) return base + 'border-pink-100 bg-white hover:border-pink-300 hover:bg-pink-50 text-gray-800 cursor-pointer'
-    if (label === (q.correct_answer as Answer)) return base + 'border-violet-300 bg-violet-50 text-violet-800'
-    if (label === selected) return base + 'border-rose-300 bg-rose-50 text-rose-800'
-    return base + 'border-gray-100 bg-gray-50 text-gray-400 cursor-default'
+    if (!selected) {
+      if (isDark)  return base + 'border-[var(--border)] bg-[var(--surface-2)] hover:border-[var(--muted)] text-[var(--text)] cursor-pointer'
+      return base + 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--muted)] hover:bg-[var(--surface-2)] text-[var(--text)] cursor-pointer'
+    }
+    if (label === (q.shuffled_correct)) {
+      return base + (isDark ? 'border-green-700 bg-green-900/30 text-green-400' : 'border-green-400 bg-green-50 text-green-800')
+    }
+    if (label === selected) {
+      return base + (isDark ? 'border-red-800 bg-red-900/20 text-red-400' : 'border-red-400 bg-red-50 text-red-700')
+    }
+    return base + (isDark ? 'border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] cursor-default' : 'border-gray-100 bg-gray-50 text-gray-400 cursor-default')
   }
 
   function optionBadge(label: Answer) {
     const base = 'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 '
-    if (!selected) return base + 'bg-pink-100 text-pink-500'
-    if (label === (q.correct_answer as Answer)) return base + 'bg-violet-400 text-white'
-    if (label === selected) return base + 'bg-rose-400 text-white'
-    return base + 'bg-gray-100 text-gray-400'
+    if (!selected) {
+      if (isDark) return base + 'bg-[var(--surface)] text-[var(--muted)]'
+      return base + 'bg-[var(--surface-2)] text-[var(--muted)]'
+    }
+    if (label === (q.shuffled_correct)) return base + 'bg-green-500 text-white'
+    if (label === selected)                     return base + 'bg-red-500 text-white'
+    return base + (isDark ? 'bg-[var(--surface)] text-[var(--muted)]' : 'bg-gray-100 text-gray-400')
   }
 
-  const isCorrect = selected === q.correct_answer
+  function handleSelect(answer: Answer) {
+    if (selected) return
+    setSelected(answer)
+    if (answer === q.shuffled_correct) setScore((s) => s + 1)
+  }
+
+  function handleNext() {
+    setSelected(null)
+    if (index + 1 >= shuffled.length) {
+      setFinished(true)
+      fetch('/api/quiz-results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ study_set_id: studySetId, score, total: shuffled.length }),
+      })
+    } else {
+      setIndex((i) => i + 1)
+    }
+  }
 
   return (
     <div className="flex flex-col gap-5 max-w-xl mx-auto">
@@ -126,29 +182,29 @@ export default function QuizPlayer({ questions }: QuizPlayerProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-2 w-48 bg-pink-100 rounded-full overflow-hidden">
+          <div className="h-2 w-48 bg-[var(--surface-2)] rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-pink-400 to-violet-400 rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <span className="text-sm text-pink-400 tabular-nums">{index + 1}/{questions.length}</span>
+          <span className="text-sm text-[var(--muted)] tabular-nums">{index + 1}/{shuffled.length}</span>
         </div>
-        <div className="flex items-center gap-1.5 bg-pink-50 text-pink-500 rounded-full px-3 py-1 text-sm font-semibold">
+        <div className="flex items-center gap-1.5 bg-[var(--surface-2)] text-[var(--text)] rounded-full px-3 py-1 text-sm font-semibold">
           ⭐ {score}
         </div>
       </div>
 
       {/* Question card */}
-      <div className="rounded-2xl bg-white border-2 border-pink-100 p-6 shadow-sm">
-        <p className="font-bold text-gray-900 text-base leading-snug mb-5">{q.question}</p>
+      <div className="rounded-2xl bg-[var(--surface)] border-2 border-[var(--border)] p-6 shadow-sm">
+        <p className="font-bold text-[var(--text)] text-base leading-snug mb-5">{q.question}</p>
         <div className="flex flex-col gap-2.5">
           {options.map(({ label, text }) => (
             <button key={label} onClick={() => handleSelect(label)} className={optionClass(label)} disabled={!!selected}>
               <span className={optionBadge(label)}>{label}</span>
               <span>{text}</span>
-              {selected && label === (q.correct_answer as Answer) && <span className="ml-auto">✓</span>}
-              {selected && label === selected && label !== (q.correct_answer as Answer) && <span className="ml-auto">✗</span>}
+              {selected && label === (q.shuffled_correct) && <span className="ml-auto">✓</span>}
+              {selected && label === selected && label !== (q.shuffled_correct) && <span className="ml-auto">✗</span>}
             </button>
           ))}
         </div>
@@ -156,9 +212,13 @@ export default function QuizPlayer({ questions }: QuizPlayerProps) {
 
       {/* Feedback */}
       {selected && (
-        <div className={`rounded-xl px-4 py-3.5 text-sm font-medium ${isCorrect ? 'bg-violet-50 text-violet-700 border border-violet-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}`}>
+        <div className={`rounded-xl px-4 py-3.5 text-sm font-medium ${
+          isCorrect
+            ? isDark ? 'bg-green-900/20 text-green-400 border border-green-800' : 'bg-green-50 text-green-700 border border-green-200'
+            : isDark ? 'bg-red-900/20 text-red-400 border border-red-800'       : 'bg-red-50 text-red-700 border border-red-200'
+        }`}>
           {isCorrect ? '🎉 ' : '💡 '}
-          {q.explanation || (isCorrect ? 'Correct!' : `Correct answer: ${q.correct_answer}`)}
+          {q.explanation || (isCorrect ? 'Correct!' : `Correct answer: ${q.shuffled_correct}`)}
         </div>
       )}
 
@@ -167,7 +227,7 @@ export default function QuizPlayer({ questions }: QuizPlayerProps) {
           onClick={handleNext}
           className="self-end rounded-full bg-gradient-to-r from-pink-400 to-violet-500 px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity shadow-sm"
         >
-          {index + 1 >= questions.length ? 'See results →' : 'Next →'}
+          {index + 1 >= shuffled.length ? 'See results →' : 'Next →'}
         </button>
       )}
     </div>
