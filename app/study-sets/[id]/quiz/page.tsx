@@ -46,7 +46,7 @@ export default async function QuizPage({ params }: PageProps) {
 
       <main className="mx-auto max-w-5xl px-6 py-6">
         <h1 className="mb-8 text-xl font-bold text-[var(--text)]">Quiz</h1>
-        <QuizPlayer questions={questions ?? []} />
+        <QuizPlayer questions={questions ?? []} studySetId={id} />
       </main>
     </div>
   )

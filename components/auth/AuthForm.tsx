@@ -45,21 +45,21 @@ export default function AuthForm({ mode }: AuthFormProps) {
   }
 
   return (
-    <div className="relative flex min-h-screen overflow-hidden">
+    <div className="relative flex min-h-screen overflow-hidden bg-[var(--bg)]">
 
       {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-pink-200 via-rose-100 to-violet-200" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[var(--hero-from)] via-[var(--bg)] to-[var(--hero-to)]" />
 
-      {/* Floating decorative blobs */}
-      <div className="absolute -top-24 -left-24 w-96 h-96 bg-pink-300 rounded-full opacity-40 blur-3xl" />
-      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-violet-300 rounded-full opacity-30 blur-3xl" />
-      <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-rose-200 rounded-full opacity-40 blur-3xl" />
+      {/* Decorative blobs */}
+      <div className="absolute -top-24 -left-24 w-96 h-96 bg-[var(--accent)] rounded-full opacity-20 blur-3xl" />
+      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-[var(--accent-2)] rounded-full opacity-15 blur-3xl" />
+      <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-[var(--accent)] rounded-full opacity-10 blur-3xl" />
 
       {/* Floating emoji items */}
       {FLOATING_ITEMS.map((item, i) => (
         <span
           key={i}
-          className="absolute text-pink-400/30 select-none pointer-events-none text-2xl"
+          className="absolute text-[var(--accent)]/20 select-none pointer-events-none"
           style={{
             top: `${10 + (i * 11) % 80}%`,
             left: `${5 + (i * 13) % 90}%`,
@@ -75,25 +75,25 @@ export default function AuthForm({ mode }: AuthFormProps) {
       <div className="relative z-10 m-auto w-full max-w-md px-4">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/60 backdrop-blur-sm mb-4 text-3xl shadow-lg">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--surface)]/60 backdrop-blur-sm mb-4 text-3xl shadow-lg">
             📚
           </div>
-          <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] bg-clip-text text-transparent">
             StudyPack ✦
           </h1>
-          <p className="text-rose-400 text-sm mt-1">
+          <p className="text-[var(--muted)] text-sm mt-1">
             {mode === 'login' ? 'Welcome back! Ready to study?' : 'Turn your notes into smart study sets'}
           </p>
         </div>
 
-        <div className="bg-white/60 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-pink-100">
-          <h2 className="text-xl font-bold text-gray-800 mb-6">
+        <div className="bg-[var(--surface)]/80 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-[var(--border)]">
+          <h2 className="text-xl font-bold text-[var(--text)] mb-6">
             {mode === 'login' ? 'Sign in' : 'Create account'}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-1.5">
+              <label htmlFor="email" className="block text-sm font-medium text-[var(--muted)] mb-1.5">
                 Email
               </label>
               <input
@@ -103,12 +103,12 @@ export default function AuthForm({ mode }: AuthFormProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full rounded-xl bg-white border border-pink-200 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-transparent"
+                className="w-full rounded-xl bg-[var(--surface)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-colors"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-600 mb-1.5">
+              <label htmlFor="password" className="block text-sm font-medium text-[var(--muted)] mb-1.5">
                 Password
               </label>
               <input
@@ -118,12 +118,12 @@ export default function AuthForm({ mode }: AuthFormProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-xl bg-white border border-pink-200 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-transparent"
+                className="w-full rounded-xl bg-[var(--surface)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-colors"
               />
             </div>
 
             {error && (
-              <div className="rounded-xl bg-red-400/20 border border-red-400/30 px-4 py-2.5 text-sm text-red-200">
+              <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-2.5 text-sm text-red-500">
                 {error}
               </div>
             )}
@@ -131,24 +131,24 @@ export default function AuthForm({ mode }: AuthFormProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-gradient-to-r from-pink-500 to-violet-500 px-4 py-3 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50 transition-opacity shadow-lg mt-2"
+              className="w-full rounded-xl bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] px-4 py-3 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50 transition-opacity shadow-lg mt-2"
             >
               {loading ? '...' : mode === 'login' ? 'Sign in →' : 'Create account →'}
             </button>
           </form>
 
-          <p className="mt-5 text-center text-sm text-gray-500">
+          <p className="mt-5 text-center text-sm text-[var(--muted)]">
             {mode === 'login' ? (
               <>
                 No account?{' '}
-                <a href="/signup" className="font-semibold text-pink-500 hover:underline">
+                <a href="/signup" className="font-semibold text-[var(--accent)] hover:underline">
                   Sign up free
                 </a>
               </>
             ) : (
               <>
                 Already have an account?{' '}
-                <a href="/login" className="font-semibold text-pink-500 hover:underline">
+                <a href="/login" className="font-semibold text-[var(--accent)] hover:underline">
                   Sign in
                 </a>
               </>

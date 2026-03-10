@@ -10,9 +10,21 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
 
-  const logoClass = mounted && theme === 'dark'
+  const isDark  = mounted && theme === 'dark'
+  const isLight = mounted && theme === 'light'
+  const isPink  = mounted && !isDark && !isLight
+
+  const logoClass = isDark
     ? 'text-white'
+    : isPink
+    ? 'bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent'
     : 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] bg-clip-text text-transparent'
+
+  const btnClass = isDark
+    ? 'bg-[var(--text)] text-[var(--bg)]'
+    : isPink
+    ? 'bg-gradient-to-r from-pink-300 to-violet-300 text-white'
+    : 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white'
 
   return (
     <nav className="border-b border-[var(--border)] bg-[var(--surface)]/80 backdrop-blur-sm px-6 py-4 sticky top-0 z-10">
@@ -23,14 +35,11 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <Link
             href="/upload"
-            className={`rounded-full px-4 py-2 text-sm font-semibold shadow-sm hover:opacity-90 transition-opacity ${
-              mounted && theme === 'dark'
-                ? 'bg-[var(--text)] text-[var(--bg)]'
-                : 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white'
-            }`}
+            className={`rounded-full px-4 py-2 text-sm font-semibold shadow-sm hover:opacity-90 transition-opacity ${btnClass}`}
           >
             + New Study Set
           </Link>
+
           <ThemeToggle />
           <form action="/api/auth/signout" method="post">
             <button type="submit" className="text-sm text-[var(--muted)] hover:text-[var(--text)] transition-colors">
