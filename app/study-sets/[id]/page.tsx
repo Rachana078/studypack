@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import Navbar from '@/components/Navbar'
 import StudyModeCards from '@/components/StudyModeCards'
 import QuizHistory from '@/components/quiz/QuizHistory'
+import ShareButton from '@/components/ShareButton'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -43,11 +44,14 @@ export default async function StudySetPage({ params }: PageProps) {
       </div>
 
       <main className="mx-auto max-w-5xl px-6 py-6">
-        <div className="mb-10">
-          <h1 className="text-3xl font-black text-[var(--text)] mb-1">{studySet.title}</h1>
-          <p className="text-sm text-[var(--muted)]">
-            Created {new Date(studySet.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-          </p>
+        <div className="mb-10 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-black text-[var(--text)] mb-1">{studySet.title}</h1>
+            <p className="text-sm text-[var(--muted)]">
+              Created {new Date(studySet.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            </p>
+          </div>
+          <ShareButton id={id} />
         </div>
 
         <StudyModeCards
