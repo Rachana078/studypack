@@ -16,7 +16,7 @@ interface QuizQuestion {
 
 interface QuizPlayerProps {
   questions: QuizQuestion[]
-  studySetId: string
+  studySetId?: string
 }
 
 type Answer = 'A' | 'B' | 'C' | 'D'
@@ -166,11 +166,13 @@ export default function QuizPlayer({ questions, studySetId }: QuizPlayerProps) {
     setSelected(null)
     if (index + 1 >= shuffled.length) {
       setFinished(true)
-      fetch('/api/quiz-results', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ study_set_id: studySetId, score, total: shuffled.length }),
-      })
+      if (studySetId) {
+        fetch('/api/quiz-results', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ study_set_id: studySetId, score, total: shuffled.length }),
+        })
+      }
     } else {
       setIndex((i) => i + 1)
     }
