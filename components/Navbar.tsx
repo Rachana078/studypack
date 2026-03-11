@@ -10,6 +10,7 @@ export default function Navbar() {
   const { theme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [userName, setUserName] = useState<string | null>(null)
+  const [streak, setStreak] = useState<number>(0)
 
   useEffect(() => {
     setMounted(true)
@@ -17,11 +18,12 @@ export default function Navbar() {
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUserName(user?.user_metadata?.full_name ?? null)
     })
+    fetch('/api/streak').then(r => r.json()).then(d => setStreak(d.current_streak ?? 0))
   }, [])
 
   const isDark  = mounted && theme === 'dark'
   const isLight = mounted && theme === 'light'
-  const isPink  = mounted && !isDark && !isLight
+  const isPink  = mounted && theme === 'pink'
 
   const logoClass = isDark
     ? 'text-white'
@@ -51,9 +53,10 @@ export default function Navbar() {
 
           <ThemeToggle />
 
-          {userName && (
-            <span className="text-sm font-medium text-[var(--muted)] hidden sm:inline">
-              {userName.split(' ')[0]}
+          {mounted && (streak > 0 || userName) && (
+            <span className="text-sm font-medium text-[var(--muted)] hidden sm:inline flex items-center gap-1.5">
+              {streak > 0 && <span>🔥 {streak}</span>}
+              {userName && <span>{userName.split(' ')[0]}</span>}
             </span>
           )}
 

@@ -27,7 +27,7 @@ export default function AuthForm({ mode, successMessage }: AuthFormProps) {
 
   const isDark  = mounted && theme === 'dark'
   const isLight = mounted && theme === 'light'
-  const isPink  = mounted && !isDark && !isLight
+  const isPink  = mounted && theme === 'pink'
 
   const logoClass = isDark
     ? 'text-white'

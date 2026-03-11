@@ -13,16 +13,19 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  const { data: studySets } = await supabase
-    .from('study_sets')
-    .select('id, title, created_at')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
+  const [{ data: studySets }, { data: streakData }] = await Promise.all([
+    supabase.from('study_sets').select('id, title, created_at').eq('user_id', user.id).order('created_at', { ascending: false }),
+    supabase.from('user_streaks').select('current_streak, longest_streak').eq('user_id', user.id).single(),
+  ])
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">
       <Navbar />
-      <DashboardHero count={studySets?.length ?? 0} />
+      <DashboardHero
+        count={studySets?.length ?? 0}
+        currentStreak={streakData?.current_streak ?? 0}
+        longestStreak={streakData?.longest_streak ?? 0}
+      />
       <main className="mx-auto max-w-5xl px-6 py-8">
         <StudySetList studySets={studySets ?? []} />
       </main>
