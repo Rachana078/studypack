@@ -77,13 +77,16 @@ const SCORE_MSG = (score: number, total: number) => {
 export default function QuizPlayer({ questions, studySetId }: QuizPlayerProps) {
   const { theme } = useTheme()
   const [mounted, setMounted] = useState(false)
-  const [shuffled] = useState<ShuffledQuestion[]>(() => buildShuffled(questions))
+  const [shuffled, setShuffled] = useState<ShuffledQuestion[]>([])
   const [index, setIndex] = useState(0)
   const [selected, setSelected] = useState<Answer | null>(null)
   const [score, setScore] = useState(0)
   const [finished, setFinished] = useState(false)
 
-  useEffect(() => setMounted(true), [])
+  useEffect(() => {
+    setMounted(true)
+    setShuffled(buildShuffled(questions))
+  }, [])
 
   const isDark  = mounted && theme === 'dark'
   const isLight = mounted && theme === 'light'
@@ -96,6 +99,10 @@ export default function QuizPlayer({ questions, studySetId }: QuizPlayerProps) {
   const actionBtnClass = isPink
     ? 'bg-gradient-to-r from-pink-300 to-purple-300 text-white'
     : isDark ? 'bg-white text-gray-900' : 'bg-gray-800 text-white'
+
+  if (!mounted || shuffled.length === 0) {
+    return <div className="min-h-[400px]" />
+  }
 
   if (questions.length === 0) {
     return (

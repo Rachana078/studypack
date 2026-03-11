@@ -6,6 +6,7 @@ import StudyModeCards from '@/components/StudyModeCards'
 import QuizHistory from '@/components/quiz/QuizHistory'
 import ShareButton from '@/components/ShareButton'
 import ExportButton from '@/components/ExportButton'
+import ReviewButton from '@/components/ReviewButton'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -26,10 +27,13 @@ export default async function StudySetPage({ params }: PageProps) {
 
   if (!studySet) notFound()
 
-  const [{ count: flashcardCount }, { count: quizCount }, { data: quizResults }, { data: flashcards }, { data: quizQuestions }] = await Promise.all([
+  const today = new Date().toISOString().slice(0, 10)
+
+  const [{ count: flashcardCount }, { count: quizCount }, { data: quizResults }, { count: dueCount }, { data: flashcards }, { data: quizQuestions }] = await Promise.all([
     supabase.from('flashcards').select('*', { count: 'exact', head: true }).eq('study_set_id', id),
     supabase.from('quiz_questions').select('*', { count: 'exact', head: true }).eq('study_set_id', id),
     supabase.from('quiz_results').select('id, score, total, created_at').eq('study_set_id', id).order('created_at', { ascending: false }).limit(10),
+    supabase.from('flashcards').select('*', { count: 'exact', head: true }).eq('study_set_id', id).lte('next_review_date', today),
     supabase.from('flashcards').select('question, answer').eq('study_set_id', id),
     supabase.from('quiz_questions').select('question, option_a, option_b, option_c, option_d, correct_answer').eq('study_set_id', id),
   ])
@@ -55,6 +59,7 @@ export default async function StudySetPage({ params }: PageProps) {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <ReviewButton id={id} dueCount={dueCount ?? 0} />
             <ExportButton title={studySet.title} flashcards={flashcards ?? []} quizQuestions={quizQuestions ?? []} />
             <ShareButton id={id} />
           </div>
