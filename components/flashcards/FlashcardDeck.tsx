@@ -118,7 +118,7 @@ export default function FlashcardDeck({ flashcards: initial }: FlashcardDeckProp
       <div className="w-full flex items-center gap-3">
         <div className="flex-1 h-2 bg-[var(--surface-2)] rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-500 ${isPink ? 'bg-gradient-to-r from-pink-400 to-violet-400' : isDark ? 'bg-[var(--text)]' : 'bg-[var(--accent)]'}`}
+            className={`h-full rounded-full transition-all duration-500 ${isPink ? 'bg-gradient-to-r from-pink-300 to-purple-300' : isDark ? 'bg-[var(--text)]' : 'bg-[var(--accent)]'}`}
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -185,7 +185,7 @@ export default function FlashcardDeck({ flashcards: initial }: FlashcardDeckProp
         </button>
         <button
           onClick={next}
-          className={`rounded-full px-6 py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm ${isPink ? 'bg-gradient-to-r from-pink-400 to-violet-500 text-white' : isDark ? 'bg-[var(--text)] text-[var(--bg)]' : 'bg-[var(--accent)] text-white'}`}
+          className={`rounded-full px-6 py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm ${isPink ? 'bg-gradient-to-r from-pink-300 to-purple-300 text-white' : isDark ? 'bg-[var(--text)] text-[var(--bg)]' : 'bg-[var(--accent)] text-white'}`}
         >
           Next →
         </button>
@@ -222,7 +222,7 @@ export default function FlashcardDeck({ flashcards: initial }: FlashcardDeckProp
             </button>
             <button
               onClick={saveEdit}
-              className="rounded-full bg-gradient-to-r from-pink-400 to-violet-500 px-5 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+              className="rounded-full bg-gradient-to-r from-pink-300 to-purple-300 px-5 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
             >
               Save
             </button>
