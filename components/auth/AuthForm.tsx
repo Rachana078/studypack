@@ -41,6 +41,12 @@ export default function AuthForm({ mode, successMessage }: AuthFormProps) {
     ? 'bg-gradient-to-r from-pink-300 to-violet-300 text-white'
     : 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white'
 
+  const linkClass = isDark
+    ? 'text-white'
+    : isPink
+    ? 'text-pink-500'
+    : 'text-gray-800'
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
@@ -233,14 +239,14 @@ export default function AuthForm({ mode, successMessage }: AuthFormProps) {
             {mode === 'login' ? (
               <>
                 No account?{' '}
-                <a href="/signup" className="font-semibold text-[var(--accent)] dark:text-white hover:underline">
+                <a href="/signup" className={`font-semibold ${linkClass} hover:underline`}>
                   Sign up free
                 </a>
               </>
             ) : (
               <>
                 Already have an account?{' '}
-                <a href="/login" className="font-semibold text-[var(--accent)] dark:text-white hover:underline">
+                <a href="/login" className={`font-semibold ${linkClass} hover:underline`}>
                   Sign in
                 </a>
               </>
