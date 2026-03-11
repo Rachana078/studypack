@@ -1,36 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StudyPack
+
+**StudyPack** is an AI-powered study tool that transforms your PDFs and Word documents into flashcards, quizzes, and interactive study sessions — instantly.
+
+**Live app:** [studypack-brown.vercel.app](https://studypack-brown.vercel.app)
+
+---
+
+## Screenshots
+
+<!-- Login page -->
+<!-- Theme switcher (pink / light / dark) -->
+<!-- Dashboard -->
+<!-- Flashcard deck -->
+<!-- Quiz mode -->
+<!-- AI chat -->
+<!-- Spaced repetition review -->
+
+---
+
+## Features
+
+### Upload & Generate
+Upload a PDF or DOCX file and StudyPack automatically extracts the content and generates:
+- **10–20 flashcards** tailored to the material
+- **8–12 multiple-choice quiz questions** with explanations
+
+### Flashcards
+Flip through your generated flashcard deck at your own pace, with smooth card-flip animations.
+
+### Spaced Repetition Review
+A smart review mode powered by the **SM-2 algorithm**. Cards are scheduled based on how well you know them — rate each card as Easy, Good, or Hard, and the system adjusts your next review date accordingly.
+
+### Quiz Mode
+Test your knowledge with auto-generated multiple-choice quizzes. Scores are saved so you can track improvement over time with a full quiz history per study set.
+
+### AI Chat
+Chat directly with your study material. Ask questions, request summaries, or quiz yourself — the AI is grounded in your uploaded content only.
+
+### Study Streaks
+Stay motivated with daily study streaks. Your current and longest streaks are tracked and displayed on your dashboard.
+
+### Export to PDF
+Export your flashcards and quiz questions as a formatted PDF to study offline or share with classmates.
+
+### Public Share
+Share any study set via a public link — no login required for viewers.
+
+### Themes
+Choose between three themes: **Pink** (default), **Light**, and **Dark**.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router, TypeScript) |
+| Styling | Tailwind CSS v4 |
+| Auth & Database | Supabase (Postgres + Storage) |
+| AI | Groq (`llama-3.3-70b-versatile`) |
+| Document Parsing | `pdf-parse`, `mammoth` |
+| PDF Export | `jsPDF` |
+| Themes | `next-themes` |
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- A [Supabase](https://supabase.com) project
+- A [Groq](https://console.groq.com) API key
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Setup
+
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+
+   Create a `.env.local` file in the project root:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   GROQ_API_KEY=your_groq_api_key
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000).
+
+---
+
+## Database Schema
+
+| Table | Key Columns |
+|---|---|
+| `study_sets` | `id`, `user_id`, `title`, `extracted_text`, `source_file_url` |
+| `flashcards` | `id`, `study_set_id`, `question`, `answer`, `interval_days`, `ease_factor`, `next_review_date` |
+| `quiz_questions` | `id`, `study_set_id`, `question`, `option_a–d`, `correct_answer`, `explanation` |
+| `quiz_results` | `id`, `study_set_id`, `user_id`, `score`, `total` |
+| `user_streaks` | `user_id`, `current_streak`, `longest_streak`, `last_studied_date` |
+
+All tables are protected with Supabase Row Level Security (RLS).
+
+---
+
+## Project Structure
+
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+studypack/
+├── app/
+│   ├── dashboard/         # Main dashboard
+│   ├── upload/            # File upload & generation
+│   ├── study-sets/[id]/   # Flashcards, quiz, review, chat
+│   └── api/               # API routes (generate, chat, streak, review…)
+├── components/
+│   ├── auth/              # Login / signup form
+│   ├── dashboard/         # Hero, study set list
+│   └── …                  # Navbar, ThemeToggle, FlashcardDeck, QuizPlayer, ChatInterface…
+└── lib/
+    ├── supabase/          # Browser + server Supabase clients
+    ├── extractor.ts       # PDF/DOCX text extraction
+    └── generator.ts       # Groq flashcard & quiz generation
+```
