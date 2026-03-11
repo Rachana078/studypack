@@ -60,13 +60,13 @@ export default function FlashcardDeck({ flashcards: initial }: FlashcardDeckProp
 
   // Card face styles
   const frontFace = !mounted || isPink
-    ? 'bg-gradient-to-br from-pink-400 to-violet-500'
+    ? 'bg-gradient-to-br from-pink-300 to-violet-300'
     : isLight
     ? 'bg-white border-2 border-gray-200'
     : 'bg-gray-800 border border-gray-700'
 
   const backFace = !mounted || isPink
-    ? 'bg-gradient-to-br from-violet-400 to-fuchsia-400'
+    ? 'bg-gradient-to-br from-violet-300 to-fuchsia-300'
     : isLight
     ? 'bg-gray-50 border-2 border-gray-200'
     : 'bg-gray-900 border border-gray-700'

@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
 import { createClient } from '@/lib/supabase/client'
 
 interface AuthFormProps {
@@ -11,12 +12,32 @@ interface AuthFormProps {
 const FLOATING_ITEMS = ['📚', '✦', '🧠', '💡', '✏️', '⭐', '🎯', '📝']
 
 export default function AuthForm({ mode }: AuthFormProps) {
-  const [email, setEmail] = useState('')
+  const [name, setName]         = useState('')
+  const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [error, setError]       = useState<string | null>(null)
+  const [loading, setLoading]   = useState(false)
   const router = useRouter()
   const supabase = createClient()
+  const { theme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
+  const isDark  = mounted && theme === 'dark'
+  const isLight = mounted && theme === 'light'
+  const isPink  = mounted && !isDark && !isLight
+
+  const logoClass = isDark
+    ? 'text-white'
+    : isPink
+    ? 'bg-gradient-to-r from-pink-300 to-purple-300 bg-clip-text text-transparent'
+    : 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] bg-clip-text text-transparent'
+
+  const btnClass = isDark
+    ? 'bg-[var(--text)] text-[var(--bg)]'
+    : isPink
+    ? 'bg-gradient-to-r from-pink-300 to-violet-300 text-white'
+    : 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white'
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -24,7 +45,14 @@ export default function AuthForm({ mode }: AuthFormProps) {
     setError(null)
 
     if (mode === 'signup') {
-      const { error } = await supabase.auth.signUp({ email, password })
+      // Clear any existing session before signing up
+      await supabase.auth.signOut()
+
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: name.trim() } },
+      })
       if (error) {
         setError(error.message)
       } else {
@@ -34,7 +62,12 @@ export default function AuthForm({ mode }: AuthFormProps) {
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) {
-        setError(error.message)
+        const msg = error.message.toLowerCase()
+        if (msg.includes('invalid login credentials') || msg.includes('email not confirmed')) {
+          setError('no-account')
+        } else {
+          setError(error.message)
+        }
       } else {
         router.push('/dashboard')
         router.refresh()
@@ -78,7 +111,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--surface)]/60 backdrop-blur-sm mb-4 text-3xl shadow-lg">
             📚
           </div>
-          <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] bg-clip-text text-transparent">
+          <h1 className={`text-3xl font-black tracking-tight ${logoClass}`}>
             StudyPack ✦
           </h1>
           <p className="text-[var(--muted)] text-sm mt-1">
@@ -92,6 +125,24 @@ export default function AuthForm({ mode }: AuthFormProps) {
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Full name — signup only */}
+            {mode === 'signup' && (
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-[var(--muted)] mb-1.5">
+                  Name
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  required
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  placeholder="Jane Smith"
+                  className="w-full rounded-xl bg-[var(--surface)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-colors"
+                />
+              </div>
+            )}
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-[var(--muted)] mb-1.5">
                 Email
@@ -101,7 +152,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                 type="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="w-full rounded-xl bg-[var(--surface)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-colors"
               />
@@ -116,22 +167,29 @@ export default function AuthForm({ mode }: AuthFormProps) {
                 type="password"
                 required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="w-full rounded-xl bg-[var(--surface)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-colors"
               />
             </div>
 
-            {error && (
+            {error === 'no-account' ? (
+              <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-2.5 text-sm text-red-500">
+                No account found with this email.{' '}
+                <a href="/signup" className="font-semibold underline hover:opacity-80">
+                  Sign up free →
+                </a>
+              </div>
+            ) : error ? (
               <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-2.5 text-sm text-red-500">
                 {error}
               </div>
-            )}
+            ) : null}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] px-4 py-3 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50 transition-opacity shadow-lg mt-2"
+              className={`w-full rounded-xl px-4 py-3 text-sm font-bold hover:opacity-90 disabled:opacity-50 transition-opacity shadow-lg mt-2 ${btnClass}`}
             >
               {loading ? '...' : mode === 'login' ? 'Sign in →' : 'Create account →'}
             </button>
