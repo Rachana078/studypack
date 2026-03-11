@@ -56,7 +56,7 @@ export default function FlashcardDeck({ flashcards: initial }: FlashcardDeckProp
 
   const isDark  = mounted && theme === 'dark'
   const isLight = mounted && theme === 'light'
-  const isPink  = mounted && !isDark && !isLight
+  const isPink  = mounted && theme === 'pink'
 
   // Card face styles
   const frontFace = !mounted || isPink

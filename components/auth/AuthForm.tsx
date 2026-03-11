@@ -13,10 +13,11 @@ interface AuthFormProps {
 const FLOATING_ITEMS = ['📚', '✦', '🧠', '💡', '✏️', '⭐', '🎯', '📝']
 
 export default function AuthForm({ mode, successMessage }: AuthFormProps) {
-  const [name, setName]         = useState('')
-  const [email, setEmail]       = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError]       = useState<string | null>(null)
+  const [name, setName]                   = useState('')
+  const [email, setEmail]                 = useState('')
+  const [password, setPassword]           = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError]                 = useState<string | null>(null)
   const [loading, setLoading]   = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -46,6 +47,12 @@ export default function AuthForm({ mode, successMessage }: AuthFormProps) {
     setError(null)
 
     if (mode === 'signup') {
+      if (password !== confirmPassword) {
+        setError('Passwords do not match')
+        setLoading(false)
+        return
+      }
+
       // Clear any existing session before signing up
       await supabase.auth.signOut()
 
@@ -176,6 +183,23 @@ export default function AuthForm({ mode, successMessage }: AuthFormProps) {
                 className="w-full rounded-xl bg-[var(--surface)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-colors"
               />
             </div>
+
+            {mode === 'signup' && (
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-[var(--muted)] mb-1.5">
+                  Confirm Password
+                </label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  required
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full rounded-xl bg-[var(--surface)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-colors"
+                />
+              </div>
+            )}
 
             {successMessage && (
               <div className="rounded-xl bg-green-500/10 border border-green-500/20 px-4 py-2.5 text-sm text-green-600">

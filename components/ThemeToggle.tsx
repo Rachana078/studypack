@@ -9,15 +9,24 @@ const ICONS: Record<string, string> = { pink: '🌸', light: '☀️', dark: '�
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const [current, setCurrent] = useState('pink')
 
-  useEffect(() => setMounted(true), [])
+  useEffect(() => {
+    setMounted(true)
+    const saved = localStorage.getItem('studypack-theme')
+    if (saved && THEMES.includes(saved)) setCurrent(saved)
+  }, [])
+
+  useEffect(() => {
+    if (theme && THEMES.includes(theme)) setCurrent(theme)
+  }, [theme])
+
   if (!mounted) return <div className="w-9 h-9" />
-
-  const current = THEMES.includes(theme ?? '') ? theme! : 'pink'
 
   function cycle() {
     const next = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length]
     setTheme(next)
+    setCurrent(next)
   }
 
   return (
