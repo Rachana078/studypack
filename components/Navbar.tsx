@@ -4,21 +4,12 @@ import Link from 'next/link'
 import ThemeToggle from './ThemeToggle'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 
 export default function Navbar() {
   const { theme } = useTheme()
   const [mounted, setMounted] = useState(false)
-  const [userName, setUserName] = useState<string | null>(null)
-  const [streak, setStreak] = useState<number>(0)
-
   useEffect(() => {
     setMounted(true)
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUserName(user?.user_metadata?.full_name ?? null)
-    })
-    fetch('/api/streak').then(r => r.json()).then(d => setStreak(d.current_streak ?? 0))
   }, [])
 
   const isDark  = mounted && theme === 'dark'
@@ -52,13 +43,6 @@ export default function Navbar() {
           </Link>
 
           <ThemeToggle />
-
-          {mounted && (streak > 0 || userName) && (
-            <span className="text-sm font-medium text-[var(--muted)] hidden sm:inline flex items-center gap-1.5">
-              {streak > 0 && <span>🔥 {streak}</span>}
-              {userName && <span>{userName.split(' ')[0]}</span>}
-            </span>
-          )}
 
           <form action="/api/auth/signout" method="post">
             <button type="submit" className="text-sm text-[var(--muted)] hover:text-[var(--text)] transition-colors">

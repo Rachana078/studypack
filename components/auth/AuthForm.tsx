@@ -80,8 +80,10 @@ export default function AuthForm({ mode, successMessage }: AuthFormProps) {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) {
         const msg = error.message.toLowerCase()
-        if (msg.includes('invalid login credentials') || msg.includes('email not confirmed')) {
+        if (msg.includes('email not confirmed')) {
           setError('no-account')
+        } else if (msg.includes('invalid login credentials')) {
+          setError('invalid-credentials')
         } else {
           setError(error.message)
         }
@@ -219,6 +221,10 @@ export default function AuthForm({ mode, successMessage }: AuthFormProps) {
                 <a href="/signup" className="font-semibold underline hover:opacity-80">
                   Sign up free →
                 </a>
+              </div>
+            ) : error === 'invalid-credentials' ? (
+              <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-2.5 text-sm text-red-500">
+                Incorrect email or password. Please try again.
               </div>
             ) : error ? (
               <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-2.5 text-sm text-red-500">
