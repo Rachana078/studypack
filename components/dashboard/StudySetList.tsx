@@ -16,12 +16,7 @@ interface StudySetListProps {
 }
 
 const PINK_GRADIENTS = [
-  'from-pink-300 to-rose-300',
-  'from-violet-300 to-purple-300',
-  'from-rose-300 to-pink-300',
-  'from-fuchsia-300 to-violet-300',
-  'from-pink-300 to-fuchsia-300',
-  'from-purple-300 to-pink-300',
+  'from-pink-300 to-purple-300',
 ]
 
 const LIGHT_GRADIENTS = [
