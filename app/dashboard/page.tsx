@@ -13,6 +13,7 @@ export default async function DashboardPage() {
   const { data: studySets } = await supabase
     .from('study_sets')
     .select('id, title, created_at')
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false })
 
   return (

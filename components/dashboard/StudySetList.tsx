@@ -98,6 +98,12 @@ export default function StudySetList({ studySets: initial }: StudySetListProps) 
   }
 
   if (sets.length === 0) {
+    const emptyBtnClass = mounted && theme === 'dark'
+      ? 'bg-white text-gray-900'
+      : mounted && theme === 'light'
+      ? 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] text-white'
+      : 'bg-gradient-to-r from-pink-300 to-purple-300 text-white'
+
     return (
       <div className="text-center py-20">
         <div className="text-6xl mb-4">📚</div>
@@ -105,7 +111,7 @@ export default function StudySetList({ studySets: initial }: StudySetListProps) 
         <p className="text-[var(--muted)] text-sm mb-6">Upload a PDF or DOCX to get started</p>
         <Link
           href="/upload"
-          className="inline-block rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] px-6 py-3 text-sm font-semibold text-white shadow hover:opacity-90 transition-opacity"
+          className={`inline-block rounded-full px-6 py-3 text-sm font-semibold shadow hover:opacity-90 transition-opacity ${emptyBtnClass}`}
         >
           Upload your first file
         </Link>

@@ -4,11 +4,20 @@ import Link from 'next/link'
 import ThemeToggle from './ThemeToggle'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 export default function Navbar() {
   const { theme } = useTheme()
   const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
+  const [userName, setUserName] = useState<string | null>(null)
+
+  useEffect(() => {
+    setMounted(true)
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUserName(user?.user_metadata?.full_name ?? null)
+    })
+  }, [])
 
   const isDark  = mounted && theme === 'dark'
   const isLight = mounted && theme === 'light'
@@ -17,7 +26,7 @@ export default function Navbar() {
   const logoClass = isDark
     ? 'text-white'
     : isPink
-    ? 'bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent'
+    ? 'bg-gradient-to-r from-pink-300 to-purple-300 bg-clip-text text-transparent'
     : 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] bg-clip-text text-transparent'
 
   const btnClass = isDark
@@ -41,6 +50,13 @@ export default function Navbar() {
           </Link>
 
           <ThemeToggle />
+
+          {userName && (
+            <span className="text-sm font-medium text-[var(--muted)] hidden sm:inline">
+              {userName.split(' ')[0]}
+            </span>
+          )}
+
           <form action="/api/auth/signout" method="post">
             <button type="submit" className="text-sm text-[var(--muted)] hover:text-[var(--text)] transition-colors">
               Sign out
