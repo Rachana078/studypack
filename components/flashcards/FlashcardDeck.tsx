@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface Flashcard {
   id: string
@@ -22,6 +22,7 @@ export default function FlashcardDeck({ flashcards: initial }: FlashcardDeckProp
   const [index, setIndex] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [editing, setEditing] = useState(false)
+  const streakCalled = useRef(false)
   const [editQuestion, setEditQuestion] = useState('')
   const [editAnswer, setEditAnswer] = useState('')
 
@@ -81,6 +82,10 @@ export default function FlashcardDeck({ flashcards: initial }: FlashcardDeckProp
   function next() {
     setFlipped(false)
     setEditing(false)
+    if (index === cards.length - 1 && !streakCalled.current) {
+      streakCalled.current = true
+      fetch('/api/streak', { method: 'POST' })
+    }
     setTimeout(() => setIndex((i) => (i + 1) % cards.length), 150)
   }
 

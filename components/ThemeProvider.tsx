@@ -6,11 +6,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
     <NextThemesProvider
       attribute="class"
-      defaultTheme="system"
+      defaultTheme="pink"
       themes={['pink', 'light', 'dark']}
       value={{ pink: 'pink', light: 'light', dark: 'dark' }}
       storageKey="studypack-theme"
-      enableSystem
       enableColorScheme={false}
     >
       {children}
