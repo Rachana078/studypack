@@ -233,14 +233,14 @@ export default function AuthForm({ mode, successMessage }: AuthFormProps) {
             {mode === 'login' ? (
               <>
                 No account?{' '}
-                <a href="/signup" className="font-semibold text-[var(--accent)] hover:underline">
+                <a href="/signup" className="font-semibold text-[var(--accent)] dark:text-white hover:underline">
                   Sign up free
                 </a>
               </>
             ) : (
               <>
                 Already have an account?{' '}
-                <a href="/login" className="font-semibold text-[var(--accent)] hover:underline">
+                <a href="/login" className="font-semibold text-[var(--accent)] dark:text-white hover:underline">
                   Sign in
                 </a>
               </>
