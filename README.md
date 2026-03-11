@@ -5,18 +5,39 @@
 **Live app:** [studypack-brown.vercel.app](https://studypack-brown.vercel.app)
 
 ---
-
-## Screenshots
-Sign Up/Login Page
-      <table>                                                                                                                           
+ ## Screenshots                                                                                                                    
+                                                                                                                                    
+  <table>                                                                                                                           
     <tr>                                                                                                                            
-      <td><img width="500" alt="signup" src="https://github.com/user-attachments/assets/db9150c4-4a08-4742-a925-7afedb119a4d"       
+      <th>Sign Up</th>                                                                                                              
+      <th>Login</th>
+    </tr>                                                                                                                           
+    <tr>                                                    
+      <td><img width="500" alt="signup" src="https://github.com/user-attachments/assets/db9150c4-4a08-4742-a925-7afedb119a4d" 
   /></td>                                                                                                                           
       <td><img width="500" alt="login" src="https://github.com/user-attachments/assets/9b68ae42-6e95-40bd-8264-296569dd6870" /></td>
     </tr>                                                                                                                           
-  </table>   
-<!-- Theme switcher (pink / light / dark) -->
-<!-- Dashboard -->
+    <tr>                                                    
+      <th>Dark Theme</th>                                                                                                           
+      <th>Light Theme</th>                                  
+    </tr>
+    <tr>
+      <td><img width="500" alt="dark" src="https://github.com/user-attachments/assets/8eed3daa-eac8-44de-a50e-f45d6d67cc8d" /></td> 
+      <td><img width="500" alt="light" src="https://github.com/user-attachments/assets/b298957c-088f-4866-92f1-2d4886b71c10" /></td>
+    </tr>                                                                                                                           
+    <tr>                                                                                                                            
+      <th>Generating Flashcards/Quiz</th>                                                                                           
+      <th>Generated</th>                                    
+    </tr>                                                                                                                           
+    <tr>                                                    
+      <td><img width="500" alt="generating" src="https://github.com/user-attachments/assets/d5325877-10f5-4902-bb59-e2459b62aa4a" 
+  /></td>                                                                                                                           
+      <td><img width="500" alt="generated" src="https://github.com/user-attachments/assets/932a32a6-5768-47e6-83f1-9a9d57440e7f" 
+  /></td>                                                                                                                           
+    </tr>                                                   
+  </table>                     
+
+
 <!-- Flashcard deck -->
 <!-- Quiz mode -->
 <!-- AI chat -->
