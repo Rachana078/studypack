@@ -7,9 +7,10 @@ interface Props {
   count: number
   currentStreak: number
   longestStreak: number
+  userName: string | null
 }
 
-export default function DashboardHero({ count, currentStreak, longestStreak }: Props) {
+export default function DashboardHero({ count, currentStreak, longestStreak, userName }: Props) {
   const { theme } = useTheme()
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
@@ -37,7 +38,9 @@ export default function DashboardHero({ count, currentStreak, longestStreak }: P
   return (
     <div className={`${bannerClass} px-6 py-10 transition-colors duration-200`}>
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-3xl font-black text-[var(--text)] mb-1">Your Study Sets</h1>
+        <h1 className="text-3xl font-black text-[var(--text)] mb-1">
+          {userName ? `Hey, ${userName.split(' ')[0]} 👋` : 'Your Study Sets'}
+        </h1>
         <p className="text-[var(--muted)] text-sm">
           {count} {count === 1 ? 'set' : 'sets'} ready to study
         </p>

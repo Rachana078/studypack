@@ -42,6 +42,7 @@ export default async function DashboardPage() {
         count={studySets?.length ?? 0}
         currentStreak={streakData?.current_streak ?? 0}
         longestStreak={streakData?.longest_streak ?? 0}
+        userName={user.user_metadata?.full_name ?? null}
       />
       <main className="mx-auto max-w-5xl px-6 py-8">
         <StudySetList studySets={studySets ?? []} dueCounts={dueCounts} />
