@@ -9,6 +9,8 @@
 ## Screenshots
 
 <!-- Login page -->
+<img width="1470" height="919" alt="image" src="https://github.com/user-attachments/assets/db9150c4-4a08-4742-a925-7afedb119a4d" />
+
 <!-- Theme switcher (pink / light / dark) -->
 <!-- Dashboard -->
 <!-- Flashcard deck -->
