@@ -6,9 +6,12 @@ import Navbar from '@/components/Navbar'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error } = await supabase.auth.getUser()
 
-  if (!user) redirect('/login')
+  if (error || !user) {
+    await supabase.auth.signOut()
+    redirect('/login')
+  }
 
   const { data: studySets } = await supabase
     .from('study_sets')

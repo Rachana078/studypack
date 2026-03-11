@@ -7,11 +7,12 @@ import { createClient } from '@/lib/supabase/client'
 
 interface AuthFormProps {
   mode: 'login' | 'signup'
+  successMessage?: string
 }
 
 const FLOATING_ITEMS = ['📚', '✦', '🧠', '💡', '✏️', '⭐', '🎯', '📝']
 
-export default function AuthForm({ mode }: AuthFormProps) {
+export default function AuthForm({ mode, successMessage }: AuthFormProps) {
   const [name, setName]         = useState('')
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
@@ -51,7 +52,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: name.trim() } },
+        options: {
+          data: { full_name: name.trim() },
+          emailRedirectTo: `${window.location.origin}/auth/confirm`,
+        },
       })
       if (error) {
         setError(error.message)
@@ -172,6 +176,12 @@ export default function AuthForm({ mode }: AuthFormProps) {
                 className="w-full rounded-xl bg-[var(--surface)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-colors"
               />
             </div>
+
+            {successMessage && (
+              <div className="rounded-xl bg-green-500/10 border border-green-500/20 px-4 py-2.5 text-sm text-green-600">
+                {successMessage}
+              </div>
+            )}
 
             {error === 'no-account' ? (
               <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-2.5 text-sm text-red-500">
