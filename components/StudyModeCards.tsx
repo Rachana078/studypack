@@ -18,10 +18,11 @@ export default function StudyModeCards({ id, flashcardCount, quizCount }: Props)
   // Before mount: neutral cards — identical on server and client, no mismatch
   if (!mounted) {
     return (
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-3">
         {[
           { href: `/study-sets/${id}/flashcards`, icon: '🗂️', label: 'Flashcards', sub: `${flashcardCount} cards to review`, cta: 'Start studying →' },
           { href: `/study-sets/${id}/quiz`,       icon: '🧠', label: 'Quiz',       sub: `${quizCount} questions`,           cta: 'Test yourself →' },
+          { href: `/study-sets/${id}/chat`,       icon: '💬', label: 'Chat',       sub: 'Ask questions about your notes',   cta: 'Start chatting →' },
         ].map((card) => (
           <Link
             key={card.href}
@@ -48,6 +49,11 @@ export default function StudyModeCards({ id, flashcardCount, quizCount }: Props)
     theme === 'dark'  ? 'from-zinc-800 to-gray-900'  :
     'from-rose-300 to-pink-400'
 
+  const chatGradient =
+    theme === 'light' ? 'from-blue-50 to-indigo-100' :
+    theme === 'dark'  ? 'from-slate-800 to-gray-900'  :
+    'from-blue-200 to-indigo-300'
+
   const isLight = theme === 'light'
   const isDark  = theme === 'dark'
   const textColor = isLight || isDark === false && theme === 'pink' ? 'text-gray-800' : isDark ? 'text-gray-100' : 'text-gray-800'
@@ -55,10 +61,11 @@ export default function StudyModeCards({ id, flashcardCount, quizCount }: Props)
   const linkColor = isLight ? 'text-gray-600' : isDark ? 'text-gray-300' : 'text-gray-700'
 
   return (
-    <div className="grid gap-5 sm:grid-cols-2">
+    <div className="grid gap-5 sm:grid-cols-3">
       {[
         { href: `/study-sets/${id}/flashcards`, icon: '🗂️', label: 'Flashcards', sub: `${flashcardCount} cards to review`, cta: 'Start studying →', gradient: flashcardGradient },
         { href: `/study-sets/${id}/quiz`,       icon: '🧠', label: 'Quiz',       sub: `${quizCount} questions`,           cta: 'Test yourself →', gradient: quizGradient       },
+        { href: `/study-sets/${id}/chat`,       icon: '💬', label: 'Chat',       sub: 'Ask questions about your notes',   cta: 'Start chatting →', gradient: chatGradient      },
       ].map((card) => (
         <Link
           key={card.href}

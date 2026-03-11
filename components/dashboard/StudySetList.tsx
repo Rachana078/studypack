@@ -13,6 +13,7 @@ interface StudySet {
 
 interface StudySetListProps {
   studySets: StudySet[]
+  dueCounts?: Record<string, number>
 }
 
 const PINK_GRADIENTS = [
@@ -37,7 +38,7 @@ const DARK_GRADIENTS = [
   'from-neutral-900 to-gray-800',
 ]
 
-export default function StudySetList({ studySets: initial }: StudySetListProps) {
+export default function StudySetList({ studySets: initial, dueCounts = {} }: StudySetListProps) {
   const { theme } = useTheme()
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
@@ -173,6 +174,12 @@ export default function StudySetList({ studySets: initial }: StudySetListProps) 
         const titleColor = !gradients ? 'text-[var(--text)]' : isLight ? 'text-gray-800' : isDark ? 'text-gray-100' : 'text-white'
         const dateColor  = !gradients ? 'text-[var(--muted)]' : isLight ? 'text-gray-500' : isDark ? 'text-gray-400' : 'text-white/70'
         const formattedDate = new Date(set.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        const dueCount = dueCounts[set.id] ?? 0
+        const badgeClass = !gradients
+          ? 'bg-[var(--accent)]/10 text-[var(--accent)]'
+          : isLight ? 'bg-gray-500/15 text-gray-600'
+          : isDark ? 'bg-white/15 text-gray-200'
+          : 'bg-white/25 text-white'
 
         const cardInner = (
           <div className="relative p-6">
@@ -194,7 +201,14 @@ export default function StudySetList({ studySets: initial }: StudySetListProps) 
             ) : (
               <h3 className={`font-bold text-base leading-snug line-clamp-2 ${titleColor}`}>{set.title}</h3>
             )}
-            <p className={`mt-2 text-xs ${dateColor}`}>{formattedDate}</p>
+            <div className="mt-2 flex items-center justify-between">
+              <p className={`text-xs ${dateColor}`}>{formattedDate}</p>
+              {dueCount > 0 && (
+                <span className={`text-xs font-semibold rounded-full px-2 py-0.5 ${badgeClass}`}>
+                  🔁 {dueCount} due
+                </span>
+              )}
+            </div>
           </div>
         )
 

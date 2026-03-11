@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar'
 import StudyModeCards from '@/components/StudyModeCards'
 import QuizHistory from '@/components/quiz/QuizHistory'
 import ShareButton from '@/components/ShareButton'
+import ReviewButton from '@/components/ReviewButton'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -25,10 +26,13 @@ export default async function StudySetPage({ params }: PageProps) {
 
   if (!studySet) notFound()
 
-  const [{ count: flashcardCount }, { count: quizCount }, { data: quizResults }] = await Promise.all([
+  const today = new Date().toISOString().slice(0, 10)
+
+  const [{ count: flashcardCount }, { count: quizCount }, { data: quizResults }, { count: dueCount }] = await Promise.all([
     supabase.from('flashcards').select('*', { count: 'exact', head: true }).eq('study_set_id', id),
     supabase.from('quiz_questions').select('*', { count: 'exact', head: true }).eq('study_set_id', id),
     supabase.from('quiz_results').select('id, score, total, created_at').eq('study_set_id', id).order('created_at', { ascending: false }).limit(10),
+    supabase.from('flashcards').select('*', { count: 'exact', head: true }).eq('study_set_id', id).lte('next_review_date', today),
   ])
 
   return (
@@ -51,7 +55,10 @@ export default async function StudySetPage({ params }: PageProps) {
               Created {new Date(studySet.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
             </p>
           </div>
-          <ShareButton id={id} />
+          <div className="flex items-center gap-2">
+            <ReviewButton id={id} dueCount={dueCount ?? 0} />
+            <ShareButton id={id} />
+          </div>
         </div>
 
         <StudyModeCards

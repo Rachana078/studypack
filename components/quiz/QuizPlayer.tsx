@@ -77,16 +77,32 @@ const SCORE_MSG = (score: number, total: number) => {
 export default function QuizPlayer({ questions, studySetId }: QuizPlayerProps) {
   const { theme } = useTheme()
   const [mounted, setMounted] = useState(false)
-  const [shuffled] = useState<ShuffledQuestion[]>(() => buildShuffled(questions))
+  const [shuffled, setShuffled] = useState<ShuffledQuestion[]>([])
   const [index, setIndex] = useState(0)
   const [selected, setSelected] = useState<Answer | null>(null)
   const [score, setScore] = useState(0)
   const [finished, setFinished] = useState(false)
 
-  useEffect(() => setMounted(true), [])
+  useEffect(() => {
+    setMounted(true)
+    setShuffled(buildShuffled(questions))
+  }, [])
 
   const isDark  = mounted && theme === 'dark'
   const isLight = mounted && theme === 'light'
+  const isPink  = mounted && theme === 'pink'
+
+  const progressFill = isPink
+    ? 'bg-gradient-to-r from-pink-300 to-purple-300'
+    : isDark ? 'bg-white' : 'bg-gray-700'
+
+  const actionBtnClass = isPink
+    ? 'bg-gradient-to-r from-pink-300 to-purple-300 text-white'
+    : isDark ? 'bg-white text-gray-900' : 'bg-gray-800 text-white'
+
+  if (!mounted || shuffled.length === 0) {
+    return <div className="min-h-[400px]" />
+  }
 
   if (questions.length === 0) {
     return (
@@ -110,14 +126,14 @@ export default function QuizPlayer({ questions, studySetId }: QuizPlayerProps) {
 
         <div className="h-3 bg-[var(--surface-2)] rounded-full overflow-hidden mb-8">
           <div
-            className="h-full bg-gradient-to-r from-pink-400 to-violet-400 rounded-full transition-all duration-700"
+            className={`h-full rounded-full transition-all duration-700 ${progressFill}`}
             style={{ width: `${pct}%` }}
           />
         </div>
 
         <button
           onClick={() => { setIndex(0); setScore(0); setSelected(null); setFinished(false) }}
-          className="rounded-full bg-gradient-to-r from-pink-400 to-violet-500 px-8 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity shadow-sm"
+          className={`rounded-full px-8 py-3 text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm ${actionBtnClass}`}
         >
           Retake quiz
         </button>
@@ -186,7 +202,7 @@ export default function QuizPlayer({ questions, studySetId }: QuizPlayerProps) {
         <div className="flex items-center gap-3">
           <div className="h-2 w-48 bg-[var(--surface-2)] rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-pink-400 to-violet-400 rounded-full transition-all duration-500"
+              className={`h-full rounded-full transition-all duration-500 ${progressFill}`}
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -227,7 +243,7 @@ export default function QuizPlayer({ questions, studySetId }: QuizPlayerProps) {
       {selected && (
         <button
           onClick={handleNext}
-          className="self-end rounded-full bg-gradient-to-r from-pink-400 to-violet-500 px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity shadow-sm"
+          className={`self-end rounded-full px-6 py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm ${actionBtnClass}`}
         >
           {index + 1 >= shuffled.length ? 'See results →' : 'Next →'}
         </button>
