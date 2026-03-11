@@ -9,9 +9,13 @@
 ## Screenshots
 
 Sign Up/Login Page
-  <p align="center">
-    <img width="700" alt="image" src="https://github.com/user-attachments/assets/db9150c4-4a08-4742-a925-7afedb119a4d" />           
-    <img width="700" alt="image" src="https://github.com/user-attachments/assets/9b68ae42-6e95-40bd-8264-296569dd6870" />                     </p>  
+      <table>                                                                                                                           
+    <tr>                                                                                                                            
+      <td><img width="500" alt="signup" src="https://github.com/user-attachments/assets/db9150c4-4a08-4742-a925-7afedb119a4d"       
+  /></td>                                                                                                                           
+      <td><img width="500" alt="login" src="https://github.com/user-attachments/assets/9b68ae42-6e95-40bd-8264-296569dd6870" /></td>
+    </tr>                                                                                                                           
+  </table>   
 <!-- Theme switcher (pink / light / dark) -->
 <!-- Dashboard -->
 <!-- Flashcard deck -->
