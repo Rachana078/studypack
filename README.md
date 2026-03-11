@@ -7,7 +7,6 @@
 ---
 
 ## Screenshots
-
 Sign Up/Login Page
       <table>                                                                                                                           
     <tr>                                                                                                                            
